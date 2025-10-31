@@ -1,0 +1,66 @@
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.pyc
+*.so
+.Python
+env/
+venv/
+.venv/
+nlp-fp/
+ENV/
+env.bak/
+venv.bak/
+
+# Jupyter Notebook
+.ipynb_checkpoints
+
+# PyTorch
+*.pth
+*.pt
+
+# Models and large files
+models/*/
+baseline_model/
+cartography_model/
+full_baseline_model/
+cartography_upweight_model/
+cartography_remove_model/
+test_*/
+output/
+
+# HuggingFace cache
+.cache/
+transformers_cache/
+
+# Datasets cache
+.datasets/
+datasets_cache/
+
+# Results (keep structure but exclude large files)
+results/baseline_evaluation/eval_predictions.jsonl
+results/cartography/cartography_data_map.png
+
+# Temporary files
+*.tmp
+*.temp
+.DS_Store
+Thumbs.db
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Logs
+*.log
+wandb/
+
+# Environment variables
+.env

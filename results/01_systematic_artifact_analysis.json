@@ -1,0 +1,112 @@
+{
+  "lexical_overlap": {
+    "mean_overlap": 0.277,
+    "high_overlap_count": 2
+  },
+  "question_patterns": {
+    "which": {
+      "person": 47,
+      "other": 24,
+      "location": 1
+    },
+    "where": {
+      "person": 14,
+      "other": 16,
+      "location": 3
+    },
+    "what": {
+      "other": 208,
+      "person": 119,
+      "date": 21,
+      "number": 12,
+      "location": 8
+    },
+    "who": {
+      "person": 163,
+      "other": 42,
+      "location": 2
+    },
+    "how": {
+      "number": 67,
+      "other": 103,
+      "person": 2,
+      "date": 3,
+      "location": 1
+    },
+    "when": {
+      "date": 40,
+      "person": 5,
+      "other": 7
+    },
+    "why": {
+      "other": 7
+    }
+  },
+  "position_bias": {
+    "mean_position": 0.4251245295226263,
+    "position_distribution": [
+      429,
+      415,
+      324,
+      365,
+      332,
+      252,
+      233,
+      218,
+      175,
+      260
+    ],
+    "mean_answer_length": 2.0562770562770565
+  },
+  "ngram_correlations": {
+    "super bowl 50?": {
+      "count": 106,
+      "dominant_pattern": "other"
+    },
+    "super bowl 50": {
+      "count": 175,
+      "dominant_pattern": "other"
+    },
+    "what was the": {
+      "count": 56,
+      "dominant_pattern": "other"
+    },
+    "the super bowl?": {
+      "count": 44,
+      "dominant_pattern": "other"
+    },
+    "the super bowl": {
+      "count": 89,
+      "dominant_pattern": "other"
+    }
+  },
+  "prediction_analysis": {
+    "accuracy": 0.073,
+    "type_confusion": {
+      "other": {
+        "date": 113,
+        "other": 660,
+        "location": 18
+      },
+      "person": {
+        "date": 2,
+        "other": 10
+      },
+      "date": {
+        "date": 51,
+        "other": 26,
+        "location": 1
+      },
+      "location": {
+        "date": 6,
+        "other": 17,
+        "location": 13
+      },
+      "number": {
+        "other": 78,
+        "date": 4,
+        "location": 1
+      }
+    }
+  }
+}

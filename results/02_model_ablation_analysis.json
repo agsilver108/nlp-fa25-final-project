@@ -1,0 +1,88 @@
+{
+  "baseline": {
+    "most_common_answer": "three",
+    "baseline_accuracy": 0.012,
+    "answer_distribution": {
+      "three": 34,
+      "Von Miller": 29,
+      "four": 27,
+      "two": 27,
+      "39": 27,
+      "CBS": 25,
+      "11": 24,
+      "Cam Newton": 23,
+      "gold": 22,
+      "Denver Broncos": 21
+    }
+  },
+  "correlations": {
+    "won super": {
+      "most_common_answer": "denver broncos",
+      "strength": 0.6666666666666666,
+      "count": 6
+    },
+    "what color": {
+      "most_common_answer": "gold",
+      "strength": 0.6666666666666666,
+      "count": 9
+    },
+    "was used": {
+      "most_common_answer": "gold",
+      "strength": 0.6,
+      "count": 5
+    },
+    "what position": {
+      "most_common_answer": "linebacker",
+      "strength": 0.5833333333333334,
+      "count": 12
+    },
+    "position does": {
+      "most_common_answer": "linebacker",
+      "strength": 0.625,
+      "count": 8
+    },
+    "of san": {
+      "most_common_answer": "ed lee",
+      "strength": 0.6,
+      "count": 5
+    },
+    "much did": {
+      "most_common_answer": "$1.2 billion",
+      "strength": 0.8,
+      "count": 5
+    },
+    "many panthers": {
+      "most_common_answer": "ten",
+      "strength": 0.6,
+      "count": 5
+    },
+    "pro bowl?": {
+      "most_common_answer": "ten",
+      "strength": 0.6,
+      "count": 5
+    },
+    "at a": {
+      "most_common_answer": "anheuser-busch inbev",
+      "strength": 0.8,
+      "count": 5
+    }
+  },
+  "type_biases": {
+    "gold_distribution": {
+      "two_words": 354,
+      "multi_word": 227,
+      "single_word": 252,
+      "date": 23,
+      "number": 144
+    },
+    "predicted_distribution": {
+      "date": 170,
+      "two_words": 318,
+      "multi_word": 477,
+      "single_word": 30,
+      "number": 5
+    }
+  },
+  "question_only_file": "question_only_squad.jsonl",
+  "passage_only_file": "passage_only_squad.jsonl"
+}

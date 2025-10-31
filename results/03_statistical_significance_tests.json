@@ -1,0 +1,104 @@
+{
+  "question_type_bias": {
+    "which": {
+      "chi_square": 2.7464104334484065,
+      "p_value": 0.05,
+      "significant": false,
+      "most_biased_type": "location",
+      "bias_ratio": 1.2626262626262625,
+      "sample_size": 72
+    },
+    "where": {
+      "chi_square": 9.284562064837095,
+      "p_value": 0.01,
+      "significant": true,
+      "most_biased_type": "location",
+      "bias_ratio": 3.6730945821854912,
+      "sample_size": 33
+    },
+    "what": {
+      "chi_square": 21.98977788914243,
+      "p_value": 0.01,
+      "significant": true,
+      "most_biased_type": "location",
+      "bias_ratio": 1.6469038208168643,
+      "sample_size": 368
+    },
+    "who": {
+      "chi_square": 16.403021230627605,
+      "p_value": 0.01,
+      "significant": true,
+      "most_biased_type": "other",
+      "bias_ratio": 1.247477527059255,
+      "sample_size": 207
+    },
+    "other": {
+      "chi_square": 3.1964968405934453,
+      "p_value": 0.05,
+      "significant": false,
+      "most_biased_type": "date",
+      "bias_ratio": 2.0460358056265986,
+      "sample_size": 85
+    },
+    "how": {
+      "chi_square": 116.30913564460843,
+      "p_value": 0.01,
+      "significant": true,
+      "most_biased_type": "number",
+      "bias_ratio": 2.959280303030303,
+      "sample_size": 176
+    },
+    "when": {
+      "chi_square": 167.6350310740443,
+      "p_value": 0.01,
+      "significant": true,
+      "most_biased_type": "date",
+      "bias_ratio": 10.033444816053512,
+      "sample_size": 52
+    }
+  },
+  "position_bias": {
+    "chi_square": 237.2097902097902,
+    "p_value": 0.01,
+    "significant": true,
+    "position_distribution": [
+      432,
+      424,
+      313,
+      375,
+      330,
+      251,
+      242,
+      214,
+      174,
+      248
+    ],
+    "most_overrepresented_bin": 0,
+    "overrepresentation_ratio": 1.4385614385614385
+  },
+  "prediction_bias": {
+    "chi_square": 1084.8672719906829,
+    "p_value": 0.01,
+    "significant": true,
+    "bias_ratios": {
+      "person": 0.0,
+      "location": 0.8181818181818182,
+      "other": 1.010126582278481,
+      "date": 7.391304347826087,
+      "number": 0.034722222222222224
+    },
+    "most_overrepresented": [
+      "date",
+      7.391304347826087
+    ],
+    "most_underrepresented": [
+      "person",
+      0.0
+    ]
+  },
+  "artifact_scores": {
+    "position_bias": 0.0034129172229377946,
+    "type_bias": 0.16293605108220868,
+    "overall_artifact_strength": 0.11507911092442741
+  }
+}
