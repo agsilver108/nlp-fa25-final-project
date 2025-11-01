@@ -90,7 +90,7 @@ def run_colab_training():
         evaluation_strategy="epoch",
         save_strategy="epoch",
         load_best_model_at_end=True,
-        metric_for_best_model="eval_f1",
+        metric_for_best_model="f1",
         fp16=True,  # Enable mixed precision
         dataloader_pin_memory=True,
         dataloader_num_workers=2,
@@ -140,7 +140,7 @@ def run_colab_training():
             evaluation_strategy="epoch",
             save_strategy="epoch",
             load_best_model_at_end=True,
-            metric_for_best_model="eval_f1",
+            metric_for_best_model="f1",
             fp16=True,
             dataloader_pin_memory=True,
             dataloader_num_workers=2,
