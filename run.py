@@ -7,7 +7,7 @@ from helpers import prepare_dataset_nli, prepare_train_dataset_qa, \
 import os
 import json
 
-NUM_PREPROCESSING_WORKERS = 2
+NUM_PREPROCESSING_WORKERS = 1  # Set to 1 to avoid multiprocessing issues on Windows
 
 
 def main():
@@ -118,7 +118,6 @@ def main():
         train_dataset_featurized = train_dataset.map(
             prepare_train_dataset,
             batched=True,
-            num_proc=NUM_PREPROCESSING_WORKERS,
             remove_columns=train_dataset.column_names
         )
     if training_args.do_eval:
@@ -128,7 +127,6 @@ def main():
         eval_dataset_featurized = eval_dataset.map(
             prepare_eval_dataset,
             batched=True,
-            num_proc=NUM_PREPROCESSING_WORKERS,
             remove_columns=eval_dataset.column_names
         )
 
