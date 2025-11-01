@@ -78,21 +78,23 @@ def run_colab_training():
     
     print(f"Preprocessing completed in {time.time() - start_time:.1f}s")
     
-    # Training configurations (simplified to avoid metric issues)
+    # Training configurations with proper evaluation
     base_training_args = TrainingArguments(
         output_dir="/content/baseline_model",
-        num_train_epochs=2,
-        per_device_train_batch_size=32,
-        per_device_eval_batch_size=64,
+        num_train_epochs=3,  # Increased to 3 epochs for better learning
+        per_device_train_batch_size=16,  # Reduced batch size for more stable training
+        per_device_eval_batch_size=32,   # Reduced for memory efficiency
         learning_rate=3e-5,
-        warmup_steps=200,
-        logging_steps=50,
-        eval_strategy="no",  # Disable evaluation during training to avoid metric issues
+        warmup_steps=500,    # Increased warmup for better convergence
+        logging_steps=100,   # Less frequent logging
+        eval_strategy="epoch",  # Enable evaluation at end of each epoch
         save_strategy="epoch",
-        load_best_model_at_end=False,
+        load_best_model_at_end=True,
+        metric_for_best_model="eval_f1",
+        greater_is_better=True,
         fp16=True,  # Enable mixed precision
-        dataloader_pin_memory=True,
-        dataloader_num_workers=2,
+        dataloader_pin_memory=False,  # Disable to avoid potential issues
+        dataloader_num_workers=0,     # Disable multiprocessing in Colab
         save_total_limit=2,
         report_to=[],
         seed=42,
@@ -143,18 +145,20 @@ def run_colab_training():
         
         cartography_training_args = TrainingArguments(
             output_dir="/content/cartography_model",
-            num_train_epochs=2,
-            per_device_train_batch_size=32,
-            per_device_eval_batch_size=64,
+            num_train_epochs=3,  # Increased to 3 epochs for better learning
+            per_device_train_batch_size=16,  # Reduced batch size for more stable training
+            per_device_eval_batch_size=32,   # Reduced for memory efficiency
             learning_rate=3e-5,
-            warmup_steps=200,
-            logging_steps=50,
-            eval_strategy="no",  # Disable evaluation during training to avoid metric issues
+            warmup_steps=500,    # Increased warmup for better convergence
+            logging_steps=100,   # Less frequent logging
+            eval_strategy="epoch",  # Enable evaluation at end of each epoch
             save_strategy="epoch",
-            load_best_model_at_end=False,
+            load_best_model_at_end=True,
+            metric_for_best_model="eval_f1",
+            greater_is_better=True,
             fp16=True,
-            dataloader_pin_memory=True,
-            dataloader_num_workers=2,
+            dataloader_pin_memory=False,  # Disable to avoid potential issues
+            dataloader_num_workers=0,     # Disable multiprocessing in Colab
             save_total_limit=2,
             report_to=[],
             seed=42,
