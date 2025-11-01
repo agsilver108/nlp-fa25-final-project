@@ -123,9 +123,22 @@ def run_colab_training():
     # 2. Train cartography-mitigated model
     print("\n🗺️ Training Cartography-Mitigated Model...")
     
-    # Load cartography weights
-    weights_path = "/content/nlp-final-project/results/cartography/training_weights_upweight_hard.json"
-    if os.path.exists(weights_path):
+    # Try multiple possible paths for cartography weights
+    possible_paths = [
+        "/content/nlp-fa25-final-project/results/cartography/training_weights_upweight_hard.json",
+        "/content/nlp-final-project/results/cartography/training_weights_upweight_hard.json",
+        "./results/cartography/training_weights_upweight_hard.json",
+        "results/cartography/training_weights_upweight_hard.json"
+    ]
+    
+    weights_path = None
+    for path in possible_paths:
+        if os.path.exists(path):
+            weights_path = path
+            print(f"✅ Found cartography weights at: {path}")
+            break
+    
+    if weights_path:
         cartography_weights = load_cartography_weights(weights_path)
         
         cartography_training_args = TrainingArguments(
@@ -197,7 +210,21 @@ def run_colab_training():
         print("\n✅ Training complete! Results saved to /content/colab_training_results.json")
         
     else:
-        print("⚠️  Cartography weights not found, skipping mitigated training")
+        print("⚠️  Cartography weights not found!")
+        print("🔍 Debugging information:")
+        print(f"Current working directory: {os.getcwd()}")
+        print("Contents of current directory:")
+        for item in os.listdir('.'):
+            print(f"  {item}")
+        if os.path.exists('results'):
+            print("Contents of results directory:")
+            for item in os.listdir('results'):
+                print(f"  results/{item}")
+            if os.path.exists('results/cartography'):
+                print("Contents of results/cartography directory:")
+                for item in os.listdir('results/cartography'):
+                    print(f"  results/cartography/{item}")
+        print("Skipping mitigated training...")
 
 if __name__ == "__main__":
     run_colab_training()
