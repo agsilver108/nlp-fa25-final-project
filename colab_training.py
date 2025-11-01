@@ -78,7 +78,7 @@ def run_colab_training():
     
     print(f"Preprocessing completed in {time.time() - start_time:.1f}s")
     
-    # Training configurations with proper evaluation
+    # Training configurations with proper evaluation (no metric_for_best_model to avoid errors)
     base_training_args = TrainingArguments(
         output_dir="/content/baseline_model",
         num_train_epochs=3,  # Increased to 3 epochs for better learning
@@ -89,9 +89,7 @@ def run_colab_training():
         logging_steps=100,   # Less frequent logging
         eval_strategy="epoch",  # Enable evaluation at end of each epoch
         save_strategy="epoch",
-        load_best_model_at_end=True,
-        metric_for_best_model="eval_f1",
-        greater_is_better=True,
+        load_best_model_at_end=False,  # Disable to avoid metric_for_best_model requirement
         fp16=True,  # Enable mixed precision
         dataloader_pin_memory=False,  # Disable to avoid potential issues
         dataloader_num_workers=0,     # Disable multiprocessing in Colab
@@ -153,9 +151,7 @@ def run_colab_training():
             logging_steps=100,   # Less frequent logging
             eval_strategy="epoch",  # Enable evaluation at end of each epoch
             save_strategy="epoch",
-            load_best_model_at_end=True,
-            metric_for_best_model="eval_f1",
-            greater_is_better=True,
+            load_best_model_at_end=False,  # Disable to avoid metric_for_best_model requirement
             fp16=True,
             dataloader_pin_memory=False,  # Disable to avoid potential issues
             dataloader_num_workers=0,     # Disable multiprocessing in Colab
