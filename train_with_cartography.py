@@ -173,7 +173,7 @@ def main():
     parser.add_argument("--logging_steps", type=int, default=500, help="Logging frequency")
     parser.add_argument("--save_steps", type=int, default=500, help="Save frequency")
     parser.add_argument("--eval_steps", type=int, default=500, help="Evaluation frequency")
-    parser.add_argument("--evaluation_strategy", default="steps", help="Evaluation strategy")
+    parser.add_argument("--eval_strategy", default="steps", help="Evaluation strategy")
     parser.add_argument("--save_strategy", default="steps", help="Save strategy")
     parser.add_argument("--load_best_model_at_end", action="store_true", help="Load best model at end")
     parser.add_argument("--metric_for_best_model", default="eval_f1", help="Metric for best model")
@@ -263,7 +263,7 @@ def main():
         logging_steps=args.logging_steps,
         save_steps=args.save_steps,
         eval_steps=args.eval_steps,
-        eval_strategy=args.evaluation_strategy,
+        eval_strategy=args.eval_strategy,
         save_strategy=args.save_strategy,
         load_best_model_at_end=args.load_best_model_at_end,
         metric_for_best_model=args.metric_for_best_model,
