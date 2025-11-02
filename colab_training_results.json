@@ -1,0 +1,16 @@
+{
+  "timestamp": "2025-11-02T09:39:38.306681",
+  "baseline": {
+    "exact_match": 52.2,
+    "f1": 61.2558456986396
+  },
+  "cartography": {
+    "exact_match": 57.1,
+    "f1": 66.34065602628719
+  },
+  "improvement": {
+    "em_diff": 4.899999999999999,
+    "f1_diff": 5.084810327647595
+  },
+  "training_time_minutes": 12.312235287825267
+}
