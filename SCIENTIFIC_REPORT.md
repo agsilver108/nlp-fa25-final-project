@@ -1,6 +1,6 @@
 # Dataset Cartography for Artifact Mitigation in Question Answering: A Systematic Investigation of Training Dynamics and Bias Reduction
 
-**Author**: [Your Name]  
+**Author**: [Your Name Here]  
 **Course**: CS388 Natural Language Processing  
 **Institution**: University of Texas at Arlington  
 **Date**: November 2, 2025  
