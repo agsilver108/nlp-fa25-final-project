@@ -14,6 +14,7 @@ from transformers import (
     AutoTokenizer, 
     AutoModelForQuestionAnswering,
     TrainingArguments,
+    DataCollatorWithPadding,
     set_seed
 )
 from datasets import load_dataset
@@ -151,6 +152,10 @@ def run_streaming_training():
     )
     logger.log("✅ Training arguments configured")
     
+    # Create data collator
+    data_collator = DataCollatorWithPadding(tokenizer)
+    logger.log("✅ Data collator created")
+    
     # Define compute_metrics for SQuAD
     def compute_metrics(eval_preds):
         """Compute SQuAD metrics for evaluation."""
@@ -162,8 +167,16 @@ def run_streaming_training():
         predictions = eval_preds.predictions
         references = eval_preds.label_ids
         
+        logger.log(f"compute_metrics called with {len(predictions)} predictions", level="DEBUG")
+        logger.log(f"  First prediction: {predictions[0] if predictions else 'None'}", level="DEBUG")
+        logger.log(f"  First reference: {references[0] if references else 'None'}", level="DEBUG")
+        
         metric = load("squad")
         result = metric.compute(predictions=predictions, references=references)
+        
+        logger.log(f"compute_metrics result keys: {list(result.keys())}", level="DEBUG")
+        logger.log(f"compute_metrics result: {result}", level="DEBUG")
+        
         return result
     
     # Train baseline model
@@ -180,6 +193,7 @@ def run_streaming_training():
         eval_dataset=eval_dataset_processed,
         eval_examples=eval_dataset,
         tokenizer=tokenizer,
+        data_collator=data_collator,
         compute_metrics=compute_metrics,
     )
     
@@ -276,6 +290,7 @@ def run_streaming_training():
                 eval_dataset=eval_dataset_processed,
                 eval_examples=eval_dataset,
                 tokenizer=tokenizer,
+                data_collator=data_collator,
                 cartography_weights=cartography_weights,
                 compute_metrics=compute_metrics,
             )
