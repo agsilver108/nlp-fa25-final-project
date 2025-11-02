@@ -4,6 +4,43 @@ Real-time Training Output Streaming Script for Colab
 Streams training progress back to local machine via HTTP/WebSocket
 """
 
+# ============================================================================
+# INSTALL REQUIRED PACKAGES - Run this first in Colab!
+# ============================================================================
+import subprocess
+import sys
+
+def install_packages():
+    """Install required packages if not already installed."""
+    packages = [
+        "torch==2.0.1",
+        "transformers==4.30.2",
+        "datasets==2.13.0",
+        "evaluate==0.4.0",
+        "scikit-learn==1.3.0",
+        "numpy==1.24.3",
+        "tqdm==4.65.0",
+    ]
+    
+    print("📦 Checking and installing required packages...")
+    for package in packages:
+        try:
+            # Try importing to see if already installed
+            pkg_name = package.split("==")[0].replace("-", "_")
+            __import__(pkg_name)
+            print(f"✅ {package} already installed")
+        except ImportError:
+            print(f"📥 Installing {package}...")
+            subprocess.check_call([sys.executable, "-m", "pip", "install", "-q", package])
+            print(f"✅ {package} installed")
+    
+    print("✅ All packages ready!\n")
+
+install_packages()
+
+# ============================================================================
+# IMPORTS
+# ============================================================================
 import os
 import json
 import torch
@@ -19,17 +56,46 @@ from transformers import (
 )
 from datasets import load_dataset
 
-# Import our custom modules
-try:
-    from helpers import QuestionAnsweringTrainer, prepare_train_dataset_qa, prepare_validation_dataset_qa
-except ImportError as e:
-    print(f"❌ Failed to import helpers: {e}")
-    raise
+# ============================================================================
+# IMPORT CUSTOM MODULES
+# ============================================================================
+import sys
+import os
+
+# Make sure we can import from the project root
+current_dir = os.getcwd()
+if current_dir not in sys.path:
+    sys.path.insert(0, current_dir)
+if '/content/nlp-fa25-final-project' not in sys.path:
+    sys.path.insert(0, '/content/nlp-fa25-final-project')
+
+print("Python path:", sys.path[:3])
 
 try:
-    from train_with_cartography import CartographyWeightedTrainer, load_cartography_weights
+    from helpers import (
+        QuestionAnsweringTrainer, 
+        prepare_train_dataset_qa, 
+        prepare_validation_dataset_qa,
+        postprocess_qa_predictions
+    )
+    print("✅ helpers module imported successfully")
 except ImportError as e:
-    print(f"⚠️  Cartography module not found: {e}")
+    print(f"❌ Failed to import from helpers: {e}")
+    print(f"   Current directory: {os.getcwd()}")
+    print(f"   Files in current dir: {os.listdir('.')[:5]}")
+    raise
+
+# CartographyWeightedTrainer and load_cartography_weights
+try:
+    from train_with_cartography import CartographyWeightedTrainer, load_cartography_weights
+    print("✅ train_with_cartography module imported successfully")
+    HAS_CARTOGRAPHY = True
+except ImportError as e:
+    print(f"⚠️  Cartography module import failed: {e}")
+    print("   Cartography training will be skipped")
+    HAS_CARTOGRAPHY = False
+    CartographyWeightedTrainer = None
+    load_cartography_weights = None
 
 class StreamingLogger:
     """Logs training progress to both console and file for streaming."""
@@ -159,7 +225,12 @@ def run_streaming_training():
     # Define compute_metrics for SQuAD
     def compute_metrics(eval_preds):
         """Compute SQuAD metrics for evaluation."""
-        from evaluate import load
+        try:
+            from evaluate import load
+        except ImportError:
+            print("❌ evaluate package not found. Installing now...")
+            subprocess.check_call([sys.executable, "-m", "pip", "install", "-q", "evaluate"])
+            from evaluate import load
         
         # eval_preds is an EvalPrediction with:
         # - predictions: list of {"id": ..., "prediction_text": ...}
@@ -171,13 +242,18 @@ def run_streaming_training():
         logger.log(f"  First prediction: {predictions[0] if predictions else 'None'}", level="DEBUG")
         logger.log(f"  First reference: {references[0] if references else 'None'}", level="DEBUG")
         
-        metric = load("squad")
-        result = metric.compute(predictions=predictions, references=references)
-        
-        logger.log(f"compute_metrics result keys: {list(result.keys())}", level="DEBUG")
-        logger.log(f"compute_metrics result: {result}", level="DEBUG")
-        
-        return result
+        try:
+            metric = load("squad")
+            result = metric.compute(predictions=predictions, references=references)
+            
+            logger.log(f"compute_metrics result keys: {list(result.keys())}", level="DEBUG")
+            logger.log(f"compute_metrics result: {result}", level="DEBUG")
+            
+            return result
+        except Exception as e:
+            logger.log(f"❌ ERROR in compute_metrics: {str(e)}", level="ERROR")
+            logger.log(f"   Type: {type(e).__name__}", level="ERROR")
+            raise
     
     # Train baseline model
     logger.log("\n" + "="*60)
@@ -257,68 +333,76 @@ def run_streaming_training():
     cartography_em = 0
     cartography_f1 = 0
     
-    if weights_path:
+    if weights_path and HAS_CARTOGRAPHY:
         try:
-            cartography_weights = load_cartography_weights(weights_path)
-            logger.log(f"✅ Loaded cartography weights ({len(cartography_weights)} examples)")
-            
-            cartography_training_args = TrainingArguments(
-                output_dir="/content/cartography_model",
-                num_train_epochs=3,
-                per_device_train_batch_size=16,
-                per_device_eval_batch_size=32,
-                learning_rate=3e-5,
-                warmup_steps=500,
-                logging_steps=100,
-                eval_strategy="epoch",
-                save_strategy="epoch",
-                load_best_model_at_end=False,
-                fp16=True,
-                dataloader_pin_memory=False,
-                dataloader_num_workers=0,
-                save_total_limit=2,
-                report_to=[],
-                seed=42,
-            )
-            
-            cartography_model = AutoModelForQuestionAnswering.from_pretrained(model_name)
-            
-            cartography_trainer = CartographyWeightedTrainer(
-                model=cartography_model,
-                args=cartography_training_args,
-                train_dataset=train_dataset_processed,
-                eval_dataset=eval_dataset_processed,
-                eval_examples=eval_dataset,
-                tokenizer=tokenizer,
-                data_collator=data_collator,
-                cartography_weights=cartography_weights,
-                compute_metrics=compute_metrics,
-            )
-            
-            logger.log("✅ Cartography trainer initialized")
-            cartography_start = time.time()
-            
-            logger.log("▶️  Starting cartography training...")
-            cartography_trainer.train()
-            cartography_time = time.time() - cartography_start
-            
-            # Evaluate
-            logger.log("📊 Evaluating cartography model...", level="EVAL")
-            cartography_results = cartography_trainer.evaluate()
-            
-            logger.log(f"✅ Cartography training completed in {cartography_time:.1f}s")
-            logger.log_metric("Cartography EM", f"{cartography_results.get('eval_exact_match', 0):.4f}")
-            logger.log_metric("Cartography F1", f"{cartography_results.get('eval_f1', 0):.4f}")
-            
-            cartography_em = cartography_results.get('eval_exact_match', 0)
-            cartography_f1 = cartography_results.get('eval_f1', 0)
+            if load_cartography_weights is None:
+                logger.log("⚠️  load_cartography_weights function not available", level="WARNING")
+                cartography_em = 0
+                cartography_f1 = 0
+            else:
+                cartography_weights = load_cartography_weights(weights_path)
+                logger.log(f"✅ Loaded cartography weights ({len(cartography_weights)} examples)")
+                
+                cartography_training_args = TrainingArguments(
+                    output_dir="/content/cartography_model",
+                    num_train_epochs=3,
+                    per_device_train_batch_size=16,
+                    per_device_eval_batch_size=32,
+                    learning_rate=3e-5,
+                    warmup_steps=500,
+                    logging_steps=100,
+                    eval_strategy="epoch",
+                    save_strategy="epoch",
+                    load_best_model_at_end=False,
+                    fp16=True,
+                    dataloader_pin_memory=False,
+                    dataloader_num_workers=0,
+                    save_total_limit=2,
+                    report_to=[],
+                    seed=42,
+                )
+                
+                cartography_model = AutoModelForQuestionAnswering.from_pretrained(model_name)
+                
+                cartography_trainer = CartographyWeightedTrainer(
+                    model=cartography_model,
+                    args=cartography_training_args,
+                    train_dataset=train_dataset_processed,
+                    eval_dataset=eval_dataset_processed,
+                    eval_examples=eval_dataset,
+                    tokenizer=tokenizer,
+                    data_collator=data_collator,
+                    cartography_weights=cartography_weights,
+                    compute_metrics=compute_metrics,
+                )
+                
+                logger.log("✅ Cartography trainer initialized")
+                cartography_start = time.time()
+                
+                logger.log("▶️  Starting cartography training...")
+                cartography_trainer.train()
+                cartography_time = time.time() - cartography_start
+                
+                # Evaluate
+                logger.log("📊 Evaluating cartography model...", level="EVAL")
+                cartography_results = cartography_trainer.evaluate()
+                
+                logger.log(f"✅ Cartography training completed in {cartography_time:.1f}s")
+                logger.log_metric("Cartography EM", f"{cartography_results.get('eval_exact_match', 0):.4f}")
+                logger.log_metric("Cartography F1", f"{cartography_results.get('eval_f1', 0):.4f}")
+                
+                cartography_em = cartography_results.get('eval_exact_match', 0)
+                cartography_f1 = cartography_results.get('eval_f1', 0)
             
         except Exception as e:
             logger.log(f"❌ ERROR in cartography training: {str(e)}", level="ERROR")
-            logger.log(f"Exception type: {type(e).__name__}")
+            logger.log(f"Exception type: {type(e).__name__}", level="ERROR")
     else:
-        logger.log("⚠️  Cartography weights not found", level="WARNING")
-        logger.log(f"Current directory: {os.getcwd()}")
+        if not HAS_CARTOGRAPHY:
+            logger.log("⚠️  Cartography module not available (import failed)", level="WARNING")
+        else:
+            logger.log("⚠️  Cartography weights not found", level="WARNING")
+            logger.log(f"Looked in: {possible_paths}", level="DEBUG")
     
     # Final results summary
     logger.log("\n" + "="*60)
