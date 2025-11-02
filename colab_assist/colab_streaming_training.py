@@ -151,10 +151,17 @@ def run_streaming_training():
     )
     logger.log("✅ Training arguments configured")
     
-    # Define compute_metrics
+    # Define compute_metrics for SQuAD
     def compute_metrics(eval_preds):
+        """Compute SQuAD metrics for evaluation."""
         from evaluate import load
-        predictions, references = eval_preds
+        
+        # eval_preds is an EvalPrediction with:
+        # - predictions: list of {"id": ..., "prediction_text": ...}
+        # - label_ids: list of {"id": ..., "answers": ...}
+        predictions = eval_preds.predictions
+        references = eval_preds.label_ids
+        
         metric = load("squad")
         result = metric.compute(predictions=predictions, references=references)
         return result
@@ -189,16 +196,23 @@ def run_streaming_training():
         baseline_results = baseline_trainer.evaluate()
         
         logger.log(f"✅ Baseline training completed in {baseline_time:.1f}s")
-        logger.log_metric("Baseline EM", f"{baseline_results.get('eval_exact_match', 0):.4f}")
-        logger.log_metric("Baseline F1", f"{baseline_results.get('eval_f1', 0):.4f}")
         
+        # Extract metrics with proper keys
         baseline_em = baseline_results.get('eval_exact_match', 0)
         baseline_f1 = baseline_results.get('eval_f1', 0)
         
+        logger.log_metric("Baseline EM", f"{baseline_em:.4f}")
+        logger.log_metric("Baseline F1", f"{baseline_f1:.4f}")
+        
         # Debug info
-        logger.log("\n🔍 Available metrics in baseline_results:")
+        logger.log("\n🔍 Available metrics in baseline_results:", level="DEBUG")
         for key, value in baseline_results.items():
-            logger.log(f"  {key}: {value}")
+            logger.log(f"  {key}: {value}", level="DEBUG")
+        
+        # Verify metrics are valid
+        if baseline_em == 0 and baseline_f1 == 0:
+            logger.log("⚠️  WARNING: Both EM and F1 are 0. Checking for issues...", level="WARNING")
+            logger.log(f"  Result keys: {list(baseline_results.keys())}", level="DEBUG")
         
     except Exception as e:
         logger.log(f"❌ ERROR in baseline training: {str(e)}", level="ERROR")
