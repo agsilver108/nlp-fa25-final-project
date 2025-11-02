@@ -17,7 +17,6 @@ def install_packages():
         "transformers==4.30.2",
         "datasets==2.13.0",
         "evaluate==0.4.0",
-        "scikit-learn==1.3.0",
         "numpy==1.24.3",
         "tqdm==4.65.0",
     ]
