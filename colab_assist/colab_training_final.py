@@ -20,13 +20,13 @@ from datasets import load_dataset
 
 # Import our custom modules
 try:
-    from helpers import QuestionAnsweringTrainer, prepare_train_dataset_qa, prepare_validation_dataset_qa, postprocess_qa_predictions
+    from helpers import QuestionAnsweringTrainer, prepare_train_dataset_qa, prepare_validation_dataset_qa, postprocess_qa_predictions  # type: ignore
 except ImportError as e:
     print(f"❌ Failed to import helpers: {e}")
     raise
 
 try:
-    from train_with_cartography import CartographyWeightedTrainer, load_cartography_weights
+    from train_with_cartography import CartographyWeightedTrainer, load_cartography_weights  # type: ignore
 except ImportError as e:
     print(f"⚠️  Cartography module not found: {e}")
 
@@ -330,7 +330,7 @@ def run_final_training():
     
     # Try download
     try:
-        from google.colab import files
+        from google.colab import files  # type: ignore
         logger.log("📥 Preparing files for download...")
         files.download('/content/colab_training_stream.log')
         files.download('/content/colab_training_results.json')
