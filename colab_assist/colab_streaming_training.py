@@ -448,7 +448,7 @@ def run_streaming_training():
     
     # Download files
     try:
-        from google.colab import files
+        from google.colab import files  # type: ignore
         logger.log("\n📥 Preparing files for download...")
         files.download('/content/colab_training_stream.log')
         files.download('/content/colab_training_results.json')
