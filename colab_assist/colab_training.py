@@ -20,6 +20,22 @@ import time
 from helpers import QuestionAnsweringTrainer, prepare_train_dataset_qa, prepare_validation_dataset_qa  # type: ignore
 from train_with_cartography import CartographyWeightedTrainer, load_cartography_weights  # type: ignore
 
+def compute_metrics_fn(eval_preds):
+    """Compute SQuAD metrics (EM and F1)."""
+    from evaluate import load  # type: ignore
+    predictions, references = eval_preds
+    
+    try:
+        metric = load("squad")
+        result = metric.compute(predictions=predictions, references=references)
+        return {
+            "exact_match": result.get("exact_match", 0),
+            "f1": result.get("f1", 0)
+        }
+    except Exception as e:
+        print(f"Error computing metrics: {e}")
+        return {"exact_match": 0, "f1": 0}
+
 def run_colab_training():
     """Run fast GPU training in Colab environment."""
     
@@ -109,6 +125,7 @@ def run_colab_training():
         eval_dataset=eval_dataset_processed,
         eval_examples=eval_dataset,
         tokenizer=tokenizer,
+        compute_metrics=compute_metrics_fn,  # ✅ ADD COMPUTE METRICS
     )
     
     baseline_start = time.time()
@@ -117,8 +134,11 @@ def run_colab_training():
     
     # Evaluate baseline
     baseline_results = baseline_trainer.evaluate()
+    baseline_em = baseline_results.get('eval_exact_match', baseline_results.get('exact_match', 0))
+    baseline_f1 = baseline_results.get('eval_f1', baseline_results.get('f1', 0))
     print(f"✅ Baseline training completed in {baseline_time:.1f}s")
-    print(f"Baseline Results: EM={baseline_results.get('eval_exact_match', 0):.3f}, F1={baseline_results.get('eval_f1', 0):.3f}")
+    print(f"📊 Baseline Exact Match: {baseline_em:.4f}")
+    print(f"📊 Baseline F1 Score:   {baseline_f1:.4f}")
     
     # 2. Train cartography-mitigated model
     print("\n🗺️ Training Cartography-Mitigated Model...")
@@ -170,6 +190,7 @@ def run_colab_training():
             eval_examples=eval_dataset,
             tokenizer=tokenizer,
             cartography_weights=cartography_weights,
+            compute_metrics=compute_metrics_fn,  # ✅ ADD COMPUTE METRICS
         )
         
         cartography_start = time.time()
@@ -178,29 +199,33 @@ def run_colab_training():
         
         # Evaluate cartography model
         cartography_results = cartography_trainer.evaluate()
+        cartography_em = cartography_results.get('eval_exact_match', cartography_results.get('exact_match', 0))
+        cartography_f1 = cartography_results.get('eval_f1', cartography_results.get('f1', 0))
         print(f"✅ Cartography training completed in {cartography_time:.1f}s")
-        print(f"Cartography Results: EM={cartography_results.get('eval_exact_match', 0):.3f}, F1={cartography_results.get('eval_f1', 0):.3f}")
+        print(f"📊 Cartography Exact Match: {cartography_em:.4f}")
+        print(f"📊 Cartography F1 Score:   {cartography_f1:.4f}")
         
         # Compare results
-        print("\n📊 Comparison:")
-        print(f"Baseline:    EM={baseline_results.get('eval_exact_match', 0):.3f}, F1={baseline_results.get('eval_f1', 0):.3f}")
-        print(f"Cartography: EM={cartography_results.get('eval_exact_match', 0):.3f}, F1={cartography_results.get('eval_f1', 0):.3f}")
+        print("\n📊 COMPARISON:")
+        print(f"Baseline:    EM={baseline_em:.4f}, F1={baseline_f1:.4f}")
+        print(f"Cartography: EM={cartography_em:.4f}, F1={cartography_f1:.4f}")
+        print(f"Improvement: EM={cartography_em - baseline_em:+.4f}, F1={cartography_f1 - baseline_f1:+.4f}")
         
         # Save results
         results = {
             "baseline": {
-                "exact_match": baseline_results.get('eval_exact_match', 0),
-                "f1": baseline_results.get('eval_f1', 0),
+                "exact_match": baseline_em,
+                "f1": baseline_f1,
                 "training_time": baseline_time
             },
             "cartography": {
-                "exact_match": cartography_results.get('eval_exact_match', 0),
-                "f1": cartography_results.get('eval_f1', 0),
+                "exact_match": cartography_em,
+                "f1": cartography_f1,
                 "training_time": cartography_time
             },
             "improvement": {
-                "em_diff": cartography_results.get('eval_exact_match', 0) - baseline_results.get('eval_exact_match', 0),
-                "f1_diff": cartography_results.get('eval_f1', 0) - baseline_results.get('eval_f1', 0)
+                "em_diff": cartography_em - baseline_em,
+                "f1_diff": cartography_f1 - baseline_f1
             }
         }
         

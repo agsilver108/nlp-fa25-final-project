@@ -57,6 +57,23 @@ def compute_squad_metrics(predictions, references):
     result = metric.compute(predictions=predictions, references=references)
     return result
 
+def compute_metrics_fn(eval_preds):
+    """Wrapper for compute_metrics to work with Trainer."""
+    predictions, references = eval_preds
+    
+    # predictions is a list of dicts: [{"id": ..., "prediction_text": ...}, ...]
+    # references is a list of dicts: [{"id": ..., "answers": {...}}, ...]
+    
+    try:
+        result = compute_squad_metrics(predictions, references)
+        return {
+            "exact_match": result.get("exact_match", 0),
+            "f1": result.get("f1", 0)
+        }
+    except Exception as e:
+        print(f"Error computing metrics: {e}")
+        return {"exact_match": 0, "f1": 0}
+
 def run_final_training():
     """Run training with explicit metric computation."""
     
@@ -154,6 +171,7 @@ def run_final_training():
         eval_dataset=eval_dataset_processed,
         eval_examples=eval_dataset,
         tokenizer=tokenizer,
+        compute_metrics=compute_metrics_fn,  # ✅ ADD COMPUTE METRICS
     )
     
     logger.log("✅ Baseline trainer initialized")
@@ -170,22 +188,15 @@ def run_final_training():
         logger.log("📊 Computing baseline metrics explicitly...", level="EVAL")
         baseline_results = baseline_trainer.evaluate()
         
-        # The trainer.evaluate() should compute metrics automatically
-        # Extract them
-        baseline_em = baseline_results.get('eval_exact_match', 0)
-        baseline_f1 = baseline_results.get('eval_f1', 0)
+        # Extract metrics with proper key names
+        baseline_em = baseline_results.get('eval_exact_match', baseline_results.get('exact_match', 0))
+        baseline_f1 = baseline_results.get('eval_f1', baseline_results.get('f1', 0))
         
-        logger.log(f"Baseline EM: {baseline_em:.4f}", level="METRIC")
-        logger.log(f"Baseline F1: {baseline_f1:.4f}", level="METRIC")
+        logger.log(f"✅ Baseline Exact Match: {baseline_em:.4f}", level="METRIC")
+        logger.log(f"✅ Baseline F1 Score:   {baseline_f1:.4f}", level="METRIC")
         
-        # Debug
-        logger.log("\n🔍 All baseline results:", level="DEBUG")
-        for key, value in baseline_results.items():
-            logger.log(f"  {key}: {value}", level="DEBUG")
-        
-        if baseline_em == 0 and baseline_f1 == 0:
-            logger.log("⚠️  ALERT: Metrics still 0 - checking trainer.evaluate() output...", level="WARNING")
-            logger.log(f"  Keys in baseline_results: {list(baseline_results.keys())}", level="WARNING")
+        # Log all results for debugging
+        logger.log(f"📋 Full baseline results: {baseline_results}", level="DEBUG")
             
     except Exception as e:
         logger.log(f"❌ ERROR in baseline: {str(e)}", level="ERROR")
@@ -251,6 +262,7 @@ def run_final_training():
                 eval_examples=eval_dataset,
                 tokenizer=tokenizer,
                 cartography_weights=cartography_weights,
+                compute_metrics=compute_metrics_fn,  # ✅ ADD COMPUTE METRICS
             )
             
             logger.log("✅ Cartography trainer initialized")
@@ -266,16 +278,14 @@ def run_final_training():
             logger.log("📊 Computing cartography metrics...", level="EVAL")
             cartography_results = cartography_trainer.evaluate()
             
-            cartography_em = cartography_results.get('eval_exact_match', 0)
-            cartography_f1 = cartography_results.get('eval_f1', 0)
+            cartography_em = cartography_results.get('eval_exact_match', cartography_results.get('exact_match', 0))
+            cartography_f1 = cartography_results.get('eval_f1', cartography_results.get('f1', 0))
             
-            logger.log(f"Cartography EM: {cartography_em:.4f}", level="METRIC")
-            logger.log(f"Cartography F1: {cartography_f1:.4f}", level="METRIC")
+            logger.log(f"✅ Cartography Exact Match: {cartography_em:.4f}", level="METRIC")
+            logger.log(f"✅ Cartography F1 Score:   {cartography_f1:.4f}", level="METRIC")
             
-            # Debug
-            logger.log("\n🔍 All cartography results:", level="DEBUG")
-            for key, value in cartography_results.items():
-                logger.log(f"  {key}: {value}", level="DEBUG")
+            # Log all results for debugging
+            logger.log(f"� Full cartography results: {cartography_results}", level="DEBUG")
             
         except Exception as e:
             logger.log(f"❌ ERROR in cartography: {str(e)}", level="ERROR")
