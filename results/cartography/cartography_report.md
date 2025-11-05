@@ -51,7 +51,7 @@ Dataset cartography analysis of SQuAD training dynamics to identify and mitigate
 
 ## Data Map Visualization
 
-![Cartography Data Map](results\cartography\cartography_data_map.png)
+![Cartography Data Map](cartography_data_map.png)
 
 The data map shows the relationship between confidence and variability:
 - **Bottom-right quadrant**: Easy examples (high confidence, low variability)
