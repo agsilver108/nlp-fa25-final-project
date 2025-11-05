@@ -12,11 +12,11 @@ from docx.oxml.ns import qn
 from docx.oxml import OxmlElement
 
 # Paths
-RESULTS_DIR = Path("c:/Users/agsil/OneDrive/UTA-MSAI/Natural Language Processing/Assignments/nlp-final-project")
-VIZ_DIR = RESULTS_DIR / "visualizations"
+RESULTS_DIR = Path(__file__).parent.parent  # Go up one level from scripts/ to project root
+VIZ_DIR = RESULTS_DIR / "deliverables" / "visualizations"
 
 # Load results
-with open(RESULTS_DIR / "colab_training_results.json", 'r') as f:
+with open(RESULTS_DIR / "deliverables" / "colab_training_results.json", 'r') as f:
     results = json.load(f)
 
 baseline_em = results['baseline']['exact_match']
@@ -390,7 +390,7 @@ for ref in references:
         run.font.size = Pt(10)
 
 # Save document
-output_path = RESULTS_DIR / 'SCIENTIFIC_REPORT.docx'
+output_path = RESULTS_DIR / 'deliverables' / 'SCIENTIFIC_REPORT.docx'
 doc.save(str(output_path))
 print('✅ Created ACM-compliant Word document')
 print(f'   Location: {output_path}')
