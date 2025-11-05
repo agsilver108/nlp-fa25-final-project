@@ -74,8 +74,7 @@ try:
     from helpers import (
         QuestionAnsweringTrainer, 
         prepare_train_dataset_qa, 
-        prepare_validation_dataset_qa,
-        postprocess_qa_predictions
+        prepare_validation_dataset_qa
     )
     print("✅ helpers module imported successfully")
 except ImportError as e:
@@ -86,7 +85,7 @@ except ImportError as e:
 
 # CartographyWeightedTrainer and load_cartography_weights
 try:
-    from train_with_cartography import CartographyWeightedTrainer, load_cartography_weights
+    from train_with_cartography import CartographyWeightedTrainer, load_cartography_weights as load_cart_weights
     print("✅ train_with_cartography module imported successfully")
     HAS_CARTOGRAPHY = True
 except ImportError as e:
@@ -94,7 +93,7 @@ except ImportError as e:
     print("   Cartography training will be skipped")
     HAS_CARTOGRAPHY = False
     CartographyWeightedTrainer = None
-    load_cartography_weights = None
+    load_cart_weights = None
 
 class StreamingLogger:
     """Logs training progress to both console and file for streaming."""
@@ -334,12 +333,12 @@ def run_streaming_training():
     
     if weights_path and HAS_CARTOGRAPHY:
         try:
-            if load_cartography_weights is None:
+            if load_cart_weights is None:
                 logger.log("⚠️  load_cartography_weights function not available", level="WARNING")
                 cartography_em = 0
                 cartography_f1 = 0
             else:
-                cartography_weights = load_cartography_weights(weights_path)
+                cartography_weights = load_cart_weights(weights_path)
                 logger.log(f"✅ Loaded cartography weights ({len(cartography_weights)} examples)")
                 
                 cartography_training_args = TrainingArguments(
