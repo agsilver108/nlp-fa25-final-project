@@ -71,7 +71,7 @@ if '/content/nlp-fa25-final-project' not in sys.path:
 print("Python path:", sys.path[:3])
 
 try:
-    from helpers import (
+    from helpers import (  # type: ignore
         QuestionAnsweringTrainer, 
         prepare_train_dataset_qa, 
         prepare_validation_dataset_qa
@@ -85,7 +85,7 @@ except ImportError as e:
 
 # CartographyWeightedTrainer and load_cartography_weights
 try:
-    from train_with_cartography import CartographyWeightedTrainer, load_cartography_weights as load_cart_weights
+    from train_with_cartography import CartographyWeightedTrainer, load_cartography_weights as load_cart_weights  # type: ignore
     print("✅ train_with_cartography module imported successfully")
     HAS_CARTOGRAPHY = True
 except ImportError as e:
