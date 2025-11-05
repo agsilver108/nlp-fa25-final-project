@@ -22,9 +22,9 @@ plt.rcParams['ytick.labelsize'] = 10
 plt.rcParams['legend.fontsize'] = 10
 
 # Paths
-RESULTS_DIR = Path("c:/Users/agsil/OneDrive/UTA-MSAI/Natural Language Processing/Assignments/nlp-final-project")
-RESULTS_JSON = RESULTS_DIR / "colab_training_results.json"
-OUTPUT_DIR = RESULTS_DIR / "visualizations"
+RESULTS_DIR = Path(__file__).parent.parent  # Go up one level from scripts/
+RESULTS_JSON = RESULTS_DIR / "deliverables" / "colab_training_results.json"
+OUTPUT_DIR = RESULTS_DIR / "deliverables" / "visualizations"
 OUTPUT_DIR.mkdir(exist_ok=True)
 
 # Load results

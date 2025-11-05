@@ -4,3 +4,7 @@ torch
 tqdm
 transformers
 evaluate
+python-docx
+matplotlib
+seaborn
+scipy
