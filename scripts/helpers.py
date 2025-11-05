@@ -1,10 +1,10 @@
-import numpy as np
+import numpy as np  # type: ignore
 import collections
 from collections import defaultdict, OrderedDict
-from transformers import Trainer, EvalPrediction
-from transformers.trainer_utils import PredictionOutput
+from transformers import Trainer, EvalPrediction  # type: ignore
+from transformers.trainer_utils import PredictionOutput  # type: ignore
 from typing import Tuple
-from tqdm.auto import tqdm
+from tqdm.auto import tqdm  # type: ignore
 
 QA_MAX_ANSWER_LENGTH = 30
 

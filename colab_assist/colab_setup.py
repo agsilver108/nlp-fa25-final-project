@@ -16,7 +16,7 @@ def setup_colab_environment():
     
     # Check if we're in Colab
     try:
-        import google.colab
+        import google.colab  # type: ignore
         IN_COLAB = True
         print("✅ Running in Google Colab")
     except ImportError:
@@ -26,7 +26,7 @@ def setup_colab_environment():
     
     # Mount Google Drive (optional, for saving results)
     print("\n📁 Mounting Google Drive...")
-    from google.colab import drive
+    from google.colab import drive  # type: ignore
     drive.mount('/content/drive')
     
     # Install additional packages if needed
@@ -45,7 +45,7 @@ def setup_colab_environment():
     
     # Check GPU availability
     print("\n🔧 Checking GPU availability...")
-    import torch
+    import torch  # type: ignore
     if torch.cuda.is_available():
         print(f"✅ GPU available: {torch.cuda.get_device_name(0)}")
         print(f"   Memory: {torch.cuda.get_device_properties(0).total_memory / 1e9:.1f} GB")

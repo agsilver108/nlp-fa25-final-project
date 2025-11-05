@@ -3,13 +3,13 @@ Create professional visualizations for the scientific report and embed them in W
 """
 
 import json
-import matplotlib.pyplot as plt
-import seaborn as sns
+import matplotlib.pyplot as plt  # type: ignore
+import seaborn as sns  # type: ignore
 from pathlib import Path
-import numpy as np
-from docx import Document
-from docx.shared import Inches, Pt, RGBColor
-from docx.enum.text import WD_ALIGN_PARAGRAPH
+import numpy as np  # type: ignore
+from docx import Document  # type: ignore
+from docx.shared import Inches, Pt, RGBColor  # type: ignore
+from docx.enum.text import WD_ALIGN_PARAGRAPH  # type: ignore
 
 # Set style for professional appearance
 sns.set_theme(style="whitegrid")

@@ -5,11 +5,11 @@ Uses Word's native math notation and professional academic styling.
 
 import json
 from pathlib import Path
-from docx import Document
-from docx.shared import Inches, Pt, RGBColor
-from docx.enum.text import WD_ALIGN_PARAGRAPH
-from docx.oxml.ns import qn
-from docx.oxml import OxmlElement
+from docx import Document  # type: ignore
+from docx.shared import Inches, Pt, RGBColor  # type: ignore
+from docx.enum.text import WD_ALIGN_PARAGRAPH  # type: ignore
+from docx.oxml.ns import qn  # type: ignore
+from docx.oxml import OxmlElement  # type: ignore
 
 # Paths
 RESULTS_DIR = Path(__file__).parent.parent  # Go up one level from scripts/ to project root

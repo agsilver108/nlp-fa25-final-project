@@ -42,18 +42,18 @@ install_packages()
 # ============================================================================
 import os
 import json
-import torch
+import torch  # type: ignore
 import sys
 import time
 from datetime import datetime
-from transformers import (
+from transformers import (  # type: ignore
     AutoTokenizer, 
     AutoModelForQuestionAnswering,
     TrainingArguments,
     DataCollatorWithPadding,
     set_seed
 )
-from datasets import load_dataset
+from datasets import load_dataset  # type: ignore
 
 # ============================================================================
 # IMPORT CUSTOM MODULES
@@ -224,11 +224,11 @@ def run_streaming_training():
     def compute_metrics(eval_preds):
         """Compute SQuAD metrics for evaluation."""
         try:
-            from evaluate import load
+            from evaluate import load  # type: ignore
         except ImportError:
             print("❌ evaluate package not found. Installing now...")
             subprocess.check_call([sys.executable, "-m", "pip", "install", "-q", "evaluate"])
-            from evaluate import load
+            from evaluate import load  # type: ignore
         
         # eval_preds is an EvalPrediction with:
         # - predictions: list of {"id": ..., "prediction_text": ...}

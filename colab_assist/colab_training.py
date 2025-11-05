@@ -6,19 +6,19 @@ Optimized for GPU training with baseline and cartography mitigation.
 
 import os
 import json
-import torch
-from transformers import (
+import torch  # type: ignore
+from transformers import (  # type: ignore
     AutoTokenizer, 
     AutoModelForQuestionAnswering,
     TrainingArguments,
     set_seed
 )
-from datasets import load_dataset
+from datasets import load_dataset  # type: ignore
 import time
 
 # Import our custom modules
-from helpers import QuestionAnsweringTrainer, prepare_train_dataset_qa, prepare_validation_dataset_qa
-from train_with_cartography import CartographyWeightedTrainer, load_cartography_weights
+from helpers import QuestionAnsweringTrainer, prepare_train_dataset_qa, prepare_validation_dataset_qa  # type: ignore
+from train_with_cartography import CartographyWeightedTrainer, load_cartography_weights  # type: ignore
 
 def run_colab_training():
     """Run fast GPU training in Colab environment."""

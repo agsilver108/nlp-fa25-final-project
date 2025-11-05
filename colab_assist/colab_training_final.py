@@ -6,17 +6,17 @@ Explicit metric computation that actually works
 
 import os
 import json
-import torch
+import torch  # type: ignore
 import sys
 import time
 from datetime import datetime
-from transformers import (
+from transformers import (  # type: ignore
     AutoTokenizer, 
     AutoModelForQuestionAnswering,
     TrainingArguments,
     set_seed
 )
-from datasets import load_dataset
+from datasets import load_dataset  # type: ignore
 
 # Import our custom modules
 try:
@@ -51,7 +51,7 @@ class StreamingLogger:
 
 def compute_squad_metrics(predictions, references):
     """Compute SQuAD metrics (EM and F1)."""
-    from evaluate import load
+    from evaluate import load  # type: ignore
     
     metric = load("squad")
     result = metric.compute(predictions=predictions, references=references)
