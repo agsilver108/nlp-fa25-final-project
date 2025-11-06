@@ -137,7 +137,7 @@ def run_final_training():
     logger.log("🔧 Creating training configuration...", level="CONFIG")
     base_training_args = TrainingArguments(
         output_dir="/content/baseline_model",
-        num_train_epochs=3,
+        num_train_epochs=8,
         per_device_train_batch_size=16,
         per_device_eval_batch_size=32,
         learning_rate=3e-5,
@@ -235,7 +235,7 @@ def run_final_training():
             
             cartography_training_args = TrainingArguments(
                 output_dir="/content/cartography_model",
-                num_train_epochs=3,
+                num_train_epochs=8,
                 per_device_train_batch_size=16,
                 per_device_eval_batch_size=32,
                 learning_rate=3e-5,
