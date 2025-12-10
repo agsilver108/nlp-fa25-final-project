@@ -38,9 +38,8 @@ transformers_cache/
 .datasets/
 datasets_cache/
 
-# Results (keep structure but exclude large files)
-results/baseline_evaluation/eval_predictions.jsonl
-results/cartography/cartography_data_map.png
+# Results (keep structure; selectively allow small artifacts)
+# Previously ignored specific evaluation files were restored and are now tracked.
 
 # Temporary files
 *.tmp

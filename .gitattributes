@@ -1,0 +1,19 @@
+# Normalize text files and mark binaries
+# Use LF in repository for JSONL (predictions), keep Git from altering PNGs or model binaries
+
+# Text files - normalize line endings
+*.py      text=auto
+*.md      text=auto
+*.json    text=auto
+*.jsonl   text eol=lf
+
+# Treat images and model artifacts as binary
+*.png     binary
+*.jpg     binary
+*.jpeg    binary
+*.safetensors binary
+*.pt      binary
+*.bin     binary
+
+# Ensure text files are normalized on checkin
+* text=auto
