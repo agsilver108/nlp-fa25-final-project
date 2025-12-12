@@ -183,6 +183,8 @@ def main():
     parser.add_argument("--cartography_strategy", default="upweight_hard", 
                        choices=["upweight_hard", "remove_easy", "balanced"],
                        help="Cartography mitigation strategy")
+    parser.add_argument("--no_cartography", action="store_true", 
+                       help="Disable cartography weighting (baseline training)")
     
     args = parser.parse_args()
     
@@ -241,7 +243,9 @@ def main():
     
     # Load cartography weights if provided
     cartography_weights = None
-    if args.cartography_weights:
+    if args.no_cartography:
+        logger.info("Cartography disabled - running baseline training")
+    elif args.cartography_weights:
         logger.info(f"Loading cartography weights: {args.cartography_weights}")
         cartography_weights = load_cartography_weights(args.cartography_weights)
     elif args.do_train:
